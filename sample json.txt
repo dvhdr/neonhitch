@@ -1,16 +1,22 @@
 [
 	{
-	“type”:”image”,
-	“url”:"https://neonhitch.blob.core.windows.net/images/IMG_20150209_214558.jpg"
+	“type”:”song”,
+	“name”:"Get Me High",
+	"album": "album_name",
 	}
-
-	{
-	“type”:”text”,
-	“string”:”Bevey - Jack & Coke”
-	}
-
-	{
-	“type”:”song”
-	“url”:"https://neonhitch.blob.core.windows.net/songs/04_Neon Hitch-Get Me High.mp3"
-	}
+	
+	"Results":
+	[
+		{
+		“type”:”image”,
+		“url”:"https://neonhitch.blob.core.windows.net/images/IMG_20150209_214558.jpg",
+		"alt":"text description of the image",
+		}
+	
+		{
+		“type”:”text”,
+		“key”:”Bevey"
+		"value":"Jack & Coke”,
+		}
+	]
 ]
