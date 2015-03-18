@@ -1,0 +1,16 @@
+[
+	{
+	“type”:”image”,
+	“url”:"https://neonhitch.blob.core.windows.net/images/IMG_20150209_214558.jpg"
+	}
+
+	{
+	“type”:”text”,
+	“string”:”Bevey - Jack & Coke”
+	}
+
+	{
+	“type”:”song”
+	“url”:"https://neonhitch.blob.core.windows.net/songs/04_Neon Hitch-Get Me High.mp3"
+	}
+]
