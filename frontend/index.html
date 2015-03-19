@@ -243,6 +243,11 @@
         }
         
         
+        var imgID = 0;
+        var txtID = 0;
+        var fxID = 0;
+        
+        
 
         function blitVideo()
         {
@@ -254,22 +259,71 @@
         // sad - we can't pull the data out if we've drawn cross-origin (eg. images from other URLs).
            // var data = ctx.getImageData(0, 0, 10, 10).data;
            var colour = Math.random() * 255;
-            
-            var pos = 0;
+           
             var px = 0;
-            for (row=9; row >=  0; --row)
+            for (row=0; row < 10; ++row)
             {
                 for (col=0; col < 10; ++col)
                 {
-                    var r = 0;//data[pos+0];
-                    var g = 0;//data[pos+1];
-                    var b = colour;//data[pos+2];
+                    var r = 0;
+                    var g = 0;
+                    var b = 0;
+                    
+                    if (row == 1)
+                    {
+                        if (col == (fxID + 1))
+                        {
+                            b = 127;
+                        }
+                        else
+                        {
+                            b = 88;
+                        }
+                    }
+                    if (row >= 2 && row < 4)
+                    {
+                        
+                        if (col == (imgID + 1))
+                        {
+                            b = 127;
+                            g = 127;
+                        }
+                        else
+                        {
+                            b = 88;
+                            g = 88;
+                        }
+                    }
+                    if (row >= 4 && row < 6)
+                    {
+                        if (col == (txtID + 1))
+                        {
+                            r = 127;
+                            g = 127;
+                        }
+                        else
+                        {
+                            r = 88;
+                            g = 88;
+                        }
+                    }
+                    if (row >= 6 && row < 8)
+                    {
+                        r = 127;
+                        b = 127;
+                    }
+                    
+                    if (row == 8)
+                    {
+                        r = 127;
+                        g = 127;
+                        b = 127;
+                    }
                     
                     if (px != 0 && px != 9 && px != 90 && px != 99)
                     {
-                        array = array.concat(px,  Math.floor(r/2), Math.floor( g/2), Math.floor( b/2));
+                        array = array.concat(px,  Math.floor(r), Math.floor( g), Math.floor( b));
                     }
-                    pos+=4;
                     px++;
                 }
                 
@@ -279,11 +333,6 @@
         }
         
         var renderVid = false;
-        
-        
-        var imgID = 0;
-        var txtID = 0;
-        var fxID = 0;
         
         
         function onLaunchpad(type, pad, val)
@@ -301,13 +350,16 @@
     
              if (pad < 20)
              {
+                 // FX select
                  fxID = pad - 11;
                  setFX(fxList[fxID], fxList[fxID].def);
                  
              }
-             else if (pad < 30)
+             else if (pad < 40)
              {
-                 var img = document.getElementById("image" + imgID++ % imgIdx);
+                 imgID = pad - 21;
+                 
+                 var img = document.getElementById("image" + imgID);
                  var x = -200 + Math.random() * 400;
                  var y = -100 + Math.random() * 200;
                  ctx.drawImage(img,x,y);
@@ -316,16 +368,17 @@
              }
              else if (pad < 60)
              {
+                 txtID = pad - 41;
                  ctx.font = "120px Lobster";
                  
-                 var txt = document.getElementById("text" + txtID++ % txtIdx);
+                 var txt = document.getElementById("text" + txtID);
                  
                  if (pad % 2)
                  {
                      ctx.font = "120px Miss Fajardose";
                  }
                  
-                 if (pad > 55)
+                 if (Math.random() > 0.5)
                  {
                      ctx.fillStyle = 'black';
                  }
@@ -335,11 +388,11 @@
                  }
                  
                  var x = 10 + Math.random() * 200;
-                 var y = 10 + Math.random() * 300;
+                 var y = 10 + Math.random() * 4 00;
                  
                  ctx.fillText(txt.innerHTML,x,y);
              }
-             else if (pad > 70)
+             else if (pad < 80)
              {
                  ctx.transform(0.9,0.2,-0.2,0.9,0,0);
              }
