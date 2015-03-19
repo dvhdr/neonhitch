@@ -1,10 +1,10 @@
 {
-
 	"Song":
 	{
 		"SongName":"Get Me High",
 		"ArtistName":"Neon Hitch",
 		"AlbumName":"album_name",
+		"SongURL":"https://neonhitch.blob.core.windows.net/songs/02_Neon%20Hitch-London%20Bitch.mp3"
 	},
 	
 	"Results":
@@ -12,13 +12,13 @@
 		{
 		"Type":"image",
 		"Key":"",
-		"Value":"https://neonhitch.blob.core.windows.net/images/IMG_20150209_214558.jpg",
-		}
+		"Value":"https://neonhitch.blob.core.windows.net/images/IMG_20150209_214558.jpg"
+		},
 	
 		{
-		"Type":”text”,
-		"key":”Bevey"
-		"value":"Jack & Coke”,
+		"Type":"text",
+		"Key":"Bevey",
+		"Value":"Jack & Coke"
 		}
 	],
 	
