@@ -23,26 +23,6 @@
                                 video {
                                     display:none;
                                 }
-                                .invert {
-                                    -webkit-filter: invert(.8);
-                                    filter: invert(.8);
-                                }
-                                .grayscale {
-                                    -webkit-filter: grayscale(1);
-                                    filter: grayscale(1);
-                                }
-                                .sepia {
-                                    -webkit-filter: sepia(1);
-                                    filter: sepia(1);
-                                }
-                                .blur {
-                                    -webkit-filter: blur(5px);
-                                    filter: blur(5px);
-                                }
-                                .hue-rotate {
-                                    -webkit-filter: hue-rotate(90deg);
-                                    filter: hue-rotate(90deg);
-                                }
                                 </style>
                                 
                                 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -116,6 +96,10 @@
                 <video autoplay="true" id="video">
                 </video>
                 
+                <video autoplay="true"  id="v" controls loop>
+                    <source src="https://neonhitch.blob.core.windows.net/videos/Neon Hitch - Freedom Music Video MASTER.mp4" type=video/mp4>
+                </video>
+                
                 <div id="grid"></div>
                 
                 <canvas id="output" width="640" height="480" style="border:1px solid #000000;">
@@ -172,6 +156,11 @@
             }
             out += "</table>"
             document.getElementById("grid").innerHTML = out;
+            
+            
+            var vid = document.getElementById('v');
+            vid.play();
+            vid.muted = true;
         }
         
         function togglePlay()
@@ -318,10 +307,16 @@
                             g = 88;
                         }
                     }
-                    if (row >= 6 && row < 8)
+                    if (row >= 6 && row < 7)
+                    {
+                        r = 96;
+                        b = 127;
+                    }
+                    
+                    if (row >= 7 && row < 8)
                     {
                         r = 127;
-                        b = 127;
+                        b = 96;
                     }
                     
                     if (row == 8)
@@ -344,12 +339,11 @@
         }
         
         var renderVid = false;
+        var renderCam = false;
         
         
         function onLaunchpad(type, pad, val)
         {
-            var video = document.querySelector("#video");
-            
             // set up the canvas
             var c = document.getElementById("output");
             var ctx = c.getContext("2d");
@@ -357,11 +351,17 @@
             if (renderVid)
             {
                 ctx.globalAlpha = 0.5;
-                ctx.drawImage(video, 0, 0);
+                var vid = document.getElementById('video');
+                ctx.drawImage(vid, 0, 0);
+            }
+            else if (renderCam)
+            {
+                ctx.globalAlpha = 0.5;
+                var vid = document.getElementById('v');
+                ctx.drawImage(vid,-200,-200);
             }
             else
             {
-                
                 ctx.globalAlpha = 1.0;
             }
             
@@ -395,6 +395,7 @@
                  {
                      ctx.drawImage(img,x,y);
                      renderVid = false;
+                     renderCam = false;
                  }
              }
              else if (pad < 60)
@@ -426,17 +427,21 @@
                      ctx.fillText(txt.innerHTML,x,y);
                  }
              }
-             else if (pad < 80)
+             else if (pad < 70)
              {
                  renderVid = true;
+                 renderCam = false;
+             }
+             else if (pad < 80)
+             {
+                 renderCam = true;
+                 renderVid = false;
              }
              else if (pad < 90)
              {
                 if (pad == 81)
                 {
                     ctx.translate(200, 80); // translate to rectangle center
-                    // x = x + 0.5 * width
-                    // y = y + 0.5 * height
                     ctx.rotate((Math.PI/180)*10); // rotate
                     ctx.translate(-200, -80); // translate back
                 }
@@ -444,9 +449,14 @@
                 {
                     ctx.transform(0.9,-0.1,0.1,0.9,0,0);
                 }
+                else if (pad == 83)
+                {
+                    // flip context horizontally
+                    ctx.scale(-1, 1);
+                }
                 else
                 {
-                 ctx.setTransform(1,0,0,1,0,0);
+                   ctx.setTransform(1,0,0,1,0,0);
                 }
              }
              
@@ -458,7 +468,6 @@
             {
                 setFX(fxList[fxID], pad);
             }
-            
         }
         
         
