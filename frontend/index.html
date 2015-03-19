@@ -247,7 +247,9 @@
              if (pad < 30)
              {
                  var img = document.getElementById("image" + imgID++ % imgIdx);
-                 ctx.drawImage(img,-300,-100);
+                 var x = -200 + Math.random() * 400;
+                 var y = -100 + Math.random() * 200;
+                 ctx.drawImage(img,x,y);
                  renderVid = false;
                  ctx.setTransform(1,0,0,1,0,0);
              }
@@ -258,7 +260,7 @@
                  var txt = document.getElementById("text" + txtID++ % txtIdx);
                  
                  var x = 10 + Math.random() * 200;
-                 var y = 10 + Math.random() * 200;
+                 var y = 100 + Math.random() * 200;
                  
                  ctx.fillText(txt.innerHTML,x,y);
              }
