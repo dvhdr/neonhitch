@@ -177,6 +177,48 @@
         
         var fxList = [
                       {
+                      filter:'brightness',
+                      units:'',
+                      max:10,
+                      min:2,
+                      def:5
+                      },
+                      {
+                      filter:'saturate',
+                      units:'',
+                      max:10,
+                      min:2,
+                      def:5
+                      },
+                      {
+                      filter:'grayscale',
+                      units:'%',
+                      max:100,
+                      min:0,
+                      def:100
+                      },
+                      {
+                      filter:'hue-rotate',
+                      units:'deg',
+                      max:360,
+                      min:0,
+                      def:180
+                      },
+                      {
+                      filter:'contrast',
+                      units:'%',
+                      max:200,
+                      min:100,
+                      def:150
+                      },
+                      {
+                      filter:'blur',
+                      units:'px',
+                      max:15,
+                      min:0,
+                      def:5
+                      },
+                      {
                       filter:'sepia',
                       units:'%',
                       max:100,
@@ -252,12 +294,16 @@
             var ctx = c.getContext("2d");
             
             
-            if (type == 0x90 && val != 0) {
+            if (type == 0x90 && val != 0)
+            {
             
-                setFX(fxList[fxID], fxList[fxID].def);
-             
-             ctx.drawImage(video, 0, 0);
-             
+    
+             if (pad < 20)
+             {
+                 fxID = pad - 11;
+                 setFX(fxList[fxID], fxList[fxID].def);
+                 
+             }
              if (pad < 30)
              {
                  var img = document.getElementById("image" + imgID++ % imgIdx);
