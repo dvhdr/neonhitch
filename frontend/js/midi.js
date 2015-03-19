@@ -1,45 +1,50 @@
-window.addEventListener('load', function()
-                        {
-                            $('#device').text("MIDI loading...");
-                            var opt = {sysex: true};
-                            navigator.requestMIDIAccess(opt).then( onMIDIInit, onMidiError );
+
+//init: start up MIDI
+window.addEventListener('load', function() {
+                        if (navigator.requestMIDIAccess)
+                        navigator.requestMIDIAccess().then( onMIDIStarted, onMIDISystemError );
+                        
                         });
+
 
 var midiAccess = null;
 var midiIn = null;
 var midiOut = null;
 var bassStationFound = false;
 
-function onMidiError( msg )
+function onMIDISystemError( msg )
 {
     console.log( "Failed to get MIDI access - " + msg );
     promptJazzPlugin();
 }
 
-function onMIDIInit( midi )
+function onMIDIStarted( midi )
 {
     midiAccess = midi;
     
     // inputs
-    var list=midiAccess.inputs();
+    var inputs= midiAccess.inputs.values();
     
-    for (var i=0; i<list.length; i++)
-    {
-        if (list[i].name.toString().indexOf("Bass Station") != -1) {
+    for ( var input = inputs.next(); input && !input.done; input = inputs.next()){
+        input = input.value;
+        
+        if (input.name.toString().indexOf("MIDI Port") != -1) {
             
-            midiIn = list[i];
+            midiIn = input;
             midiIn.onmidimessage = midiProc;
             bassStationFound = true;
         }
     }
     
     // output
-    list=midi.outputs();
-    for (var i=0; i<list.length; i++)
-    {
-        if (list[i].name.toString().indexOf("Bass Station") != -1)
+    var outputs= midiAccess.outputs.values();
+    
+    for ( var output = outputs.next(); output && !output.done; output = outputs.next()){
+        output = output.value;
+    
+        if (output.name.toString().indexOf("MIDI Port") != -1)
         {
-            midiOut = list[i];
+            midiOut = output;
             break;
         }
     }
@@ -47,11 +52,11 @@ function onMIDIInit( midi )
     if (midiOut && bassStationFound)
     {
         // whee!
-        $('#device').text("Bass Station II connected!");
+        $('#device').text("Launchpad connected!");
     }
     else
     {
-        $('#device').text("Please connect a Bass Station II");
+        $('#device').text("Please connect a Launchpad");
     }
 }
 
@@ -64,17 +69,11 @@ function sendSysex(bytes)
 }
 
 function midiProc(event) {
-    if (event.data.length == 154)
-    {
-        // got a patch!
-        uploadSysexPatch(event.data);
-    }
-    else
-    {
+
         data = event.data;
         var cmd = data[0] >> 4;
         var channel = data[0] & 0xf;
         var noteNumber = data[1];
         var velocity = data[2];
-    }
+
 }
