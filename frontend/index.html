@@ -178,14 +178,14 @@
         
         var fxList = [
                       {
-                      filter:'brightness',
+                      filter:'saturate',
                       units:'',
                       max:10,
                       min:2,
                       def:5
                       },
                       {
-                      filter:'saturate',
+                      filter:'brightness',
                       units:'',
                       max:10,
                       min:2,
@@ -343,6 +343,16 @@
             var c = document.getElementById("output");
             var ctx = c.getContext("2d");
             
+            if (renderVid)
+            {
+                ctx.globalAlpha = 0.5;
+                ctx.drawImage(video, 0, 0);
+            }
+            else
+            {
+                
+                ctx.globalAlpha = 1.0;
+            }
             
             if (type == 0x90 && val != 0)
             {
@@ -362,9 +372,11 @@
                  var img = document.getElementById("image" + imgID);
                  var x = -200 + Math.random() * 400;
                  var y = -100 + Math.random() * 200;
-                 ctx.drawImage(img,x,y);
-                 renderVid = false;
-                 ctx.setTransform(1,0,0,1,0,0);
+                 if (img)
+                 {
+                     ctx.drawImage(img,x,y);
+                     renderVid = false;
+                 }
              }
              else if (pad < 60)
              {
@@ -388,19 +400,32 @@
                  }
                  
                  var x = 10 + Math.random() * 200;
-                 var y = 10 + Math.random() * 4 00;
+                 var y = 10 + Math.random() * 400;
                  
-                 ctx.fillText(txt.innerHTML,x,y);
+                 if (txt)
+                 {
+                     ctx.fillText(txt.innerHTML,x,y);
+                 }
              }
              else if (pad < 80)
              {
-                 ctx.transform(0.9,0.2,-0.2,0.9,0,0);
-             }
-             else
-             {
                  renderVid = true;
              }
-             
+             else if (pad < 90)
+             {
+                if (pad == 81)
+                {
+                 ctx.transform(0.9,0.1,-0.1,0.9,0,0);
+                }
+                else if (pad == 82)
+                {
+                    ctx.transform(0.9,-0.1,0.1,0.9,0,0);
+                }
+                else
+                {
+                 ctx.setTransform(1,0,0,1,0,0);
+                }
+             }
              
              blitVideo();
              
@@ -411,10 +436,6 @@
                 setFX(fxList[fxID], pad);
             }
             
-            if (renderVid)
-            {
-                ctx.drawImage(video, 0, 0);
-            }
         }
         
         
