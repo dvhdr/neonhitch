@@ -137,38 +137,39 @@
         xmlhttp.open("GET", url, true);
         xmlhttp.send();
         
+        var content;
+        
         function onJSON(response) {
             var blob = JSON.parse(response);
             
             // song info
             document.getElementById("songtitle").innerHTML = blob.Song.SongName;
             
-            var song = blob.Song.url;
-            
             var aud = "<audio controls><source src=\"" + blob.Song.SongURL + "\" type=\"audio/mpeg\"> </audio>";
             document.getElementById("player").innerHTML = aud;
             
             // build the grid
-            var arr = blob.Results;
+            content = blob.Results;
             var i;
             var out = "<table>";
             
-            for(i = 0; i < arr.length; i++) {
+            for(i = 0; i < content.length; i++) {
                 out += "<tr><td>";
                 
-                if ( arr[i].Type == "image") {
-                    out += "<img id=\"davesimage\" src=" + arr[i].Value + "  width=\"128\" />"
+                if ( content[i].Type == "image") {
+                    out += "<img id=\"davesimage\" src=" + content[i].Value + "  width=\"128\" />"
                 }
-                else if ( arr[i].Type == "text") {
-                    out += "<p id=\"davestext\">" + arr[i].Value + "</p>"
+                else if ( content[i].Type == "text") {
+                    out += "<p id=\"davestext\">" + content[i].Value + "</p>"
                 }
                 
                 out += "</tr>";
             }
             out += "</table>"
             document.getElementById("grid").innerHTML = out;
-            
         }
+        
+        
         
         var filter = 0;
         
@@ -179,7 +180,9 @@
             
             var array = new Array();
             
-            var data = ctx.getImageData(0, 0, 10, 10).data;
+        // sad - we can't pull the data out if we've drawn cross-origin (eg. images from other URLs).
+           // var data = ctx.getImageData(0, 0, 10, 10).data;
+           var colour = Math.random() * 255;
             
             var pos = 0;
             var px = 0;
@@ -187,9 +190,9 @@
             {
                 for (col=0; col < 10; ++col)
                 {
-                    var r = data[pos+0];
-                    var g = data[pos+1];
-                    var b = data[pos+2];
+                    var r = colour;//data[pos+0];
+                    var g = colour;//data[pos+1];
+                    var b = colour;//data[pos+2];
                     
                     if (px != 0 && px != 9 && px != 90 && px != 99)
                     {
@@ -236,7 +239,7 @@
              else if (pad < 60)
              {
                  ctx.font = "120px Helvetica";
-                 ctx.fillText("Neon Hitch",200,250);
+                 ctx.fillText("Neon Hitch",100,250);
              }
              else if (pad > 70)
              {
