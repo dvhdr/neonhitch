@@ -6,6 +6,7 @@
                                 <!-- Bootstrap core CSS -->
                                 <link href="css/bootstrap.min.css" rel="stylesheet">
                                 <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+                                <link href='http://fonts.googleapis.com/css?family=Miss+Fajardose' rel='stylesheet' type='text/css'>
                                 
                                 <style>
                                 h1-title
@@ -201,7 +202,7 @@
                       filter:'hue-rotate',
                       units:'deg',
                       max:360,
-                      min:0,
+                      min:180,
                       def:180
                       },
                       {
@@ -214,9 +215,9 @@
                       {
                       filter:'blur',
                       units:'px',
-                      max:15,
+                      max:20,
                       min:0,
-                      def:5
+                      def:10
                       },
                       {
                       filter:'sepia',
@@ -229,7 +230,7 @@
                       filter:'invert',
                       units:'%',
                       max:100,
-                      min:0,
+                      min:50,
                       def:100
                       },
         
@@ -304,7 +305,7 @@
                  setFX(fxList[fxID], fxList[fxID].def);
                  
              }
-             if (pad < 30)
+             else if (pad < 30)
              {
                  var img = document.getElementById("image" + imgID++ % imgIdx);
                  var x = -200 + Math.random() * 400;
@@ -319,8 +320,22 @@
                  
                  var txt = document.getElementById("text" + txtID++ % txtIdx);
                  
+                 if (pad % 2)
+                 {
+                     ctx.font = "120px Miss Fajardose";
+                 }
+                 
+                 if (pad > 55)
+                 {
+                     ctx.fillStyle = 'black';
+                 }
+                 else
+                 {
+                     ctx.fillStyle = 'white';
+                 }
+                 
                  var x = 10 + Math.random() * 200;
-                 var y = 100 + Math.random() * 200;
+                 var y = 10 + Math.random() * 300;
                  
                  ctx.fillText(txt.innerHTML,x,y);
              }
