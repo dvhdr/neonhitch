@@ -17,8 +17,18 @@ namespace NeonHitchContentService.EntityModel.ExternalModels.Decibel
         {
             return Results.Where(x => !String.IsNullOrEmpty(x.ImageId)).Select(y => new NormalisedResult
             {
-                Artist = ArtistName, Key = y.Title, Value = y.ImageId, Type = ContentType.Image,
+                Artist = ArtistName, Key = CreateKey(y), Value = ImageIdToUrl(y.ImageId), Type = ContentType.Image,
             }).ToList();
+        }
+
+        private static string ImageIdToUrl(string imageId)
+        {
+            return "https://rest.decibel.net/v3/images/" + imageId;
+        }
+
+        private static string CreateKey(DecibelAlbumResult result)
+        {
+            return result.Title + " by " + result.ArtistsLiteral;
         }
     }
 
@@ -29,5 +39,7 @@ namespace NeonHitchContentService.EntityModel.ExternalModels.Decibel
         public string Title { get; set; }
 
         public string ImageId { get; set; }
+
+        public string ArtistsLiteral { get; set; }
     }
 }
