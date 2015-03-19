@@ -110,7 +110,8 @@
                 <div class="jumbotron">
                 
                 <h1 id="songtitle" style="font-family: 'Lobster', cursive;"></h1>
-                <div id="player"></div>
+                
+                <audio  id="audioplayer"  controls><source type="audio/mpeg"> </audio>;
                 
                 <video autoplay="true" id="video">
                 </video>
@@ -149,8 +150,7 @@
             // song info
             document.getElementById("songtitle").innerHTML = blob.Song.SongName;
             
-            var aud = "<audio controls><source src=\"" + blob.Song.SongUrl + "\" type=\"audio/mpeg\"> </audio>";
-            document.getElementById("player").innerHTML = aud;
+            document.getElementById("audioplayer").src = blob.Song.SongUrl;
             
             // build the grid
             content = blob.Results;
@@ -174,7 +174,18 @@
             document.getElementById("grid").innerHTML = out;
         }
         
-        
+        function togglePlay()
+        {
+            var player = document.getElementById('audioplayer');
+            if (player.paused)
+            {
+                player.play();
+            }
+            else
+            {
+                player.pause();
+            }
+        }
         
         var fxList = [
                       {
@@ -354,6 +365,14 @@
                 ctx.globalAlpha = 1.0;
             }
             
+            if (type == 0xB0 && val > 0)
+            {
+                if (pad < 10)
+                {
+                    togglePlay();
+                }
+            }
+            
             if (type == 0x90 && val != 0)
             {
             
@@ -415,7 +434,11 @@
              {
                 if (pad == 81)
                 {
-                 ctx.transform(0.9,0.1,-0.1,0.9,0,0);
+                    ctx.translate(200, 80); // translate to rectangle center
+                    // x = x + 0.5 * width
+                    // y = y + 0.5 * height
+                    ctx.rotate((Math.PI/180)*10); // rotate
+                    ctx.translate(-200, -80); // translate back
                 }
                 else if (pad == 82)
                 {
