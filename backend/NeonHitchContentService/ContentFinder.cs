@@ -17,7 +17,7 @@ namespace NeonHitchContentService
         /// </summary>
         /// <param name="songId"></param>
         /// <returns></returns>
-        public static IEnumerable<NormalisedResult> FindContent(ContentQuery query)
+        public static NormalisedContentSet FindContent(ContentQuery query)
         {
             var contentResults = new List<NormalisedResult>();
 
@@ -40,7 +40,67 @@ namespace NeonHitchContentService
             // Get decibel artwork for related artists
             contentResults.AddRange(decibel.ImportArtwork(hitchSong.RelatedArtist));
 
-            return contentResults;
+            return new NormalisedContentSet
+            {
+                NormalisedResults = contentResults,
+                Song = new Song
+                {
+                    ArtistName = hitchSong.Artist,
+                    SongName = hitchSong.Title,
+                    SongUrl = hitchSong.AudioLink,
+                }
+            };
         }
+    }
+
+    public class NormalisedContentSet
+    {
+        public IEnumerable<NormalisedResult> NormalisedResults { get; set; }
+ 
+        public Song Song { get; set; }
+
+        public ContentResult Evaluate()
+        {
+            var normalisedResultList = NormalisedResults.ToList();
+
+            var skipCounter = 0;
+            var positionCounter = 0;
+            while (positionCounter < normalisedResultList.Count())
+            {
+                var image = normalisedResultList.Where(x => x.Type == ContentType.Image).Skip(skipCounter).FirstOrDefault();
+                if (image != null)
+                {
+                    image.Position = positionCounter;
+                    positionCounter++;
+                }
+
+
+                var text = normalisedResultList.Where(x => x.Type == ContentType.Text).Skip(skipCounter).FirstOrDefault();
+                if (text != null)
+                {
+                    text.Position = positionCounter;
+                    positionCounter++;
+                }
+
+                var video = normalisedResultList.Where(x => x.Type == ContentType.Video).Skip(skipCounter).FirstOrDefault();
+                if (video != null)
+                {
+                    video.Position = positionCounter;
+                    positionCounter++;
+                }
+
+                skipCounter++;
+            }
+
+            var orderedResults = normalisedResultList.OrderBy(x => x.Position);
+            var contentItems = orderedResults.Select(normalisedResult => normalisedResult.Evaluate()).ToList();
+
+            return new ContentResult
+            {
+                Results = contentItems.ToArray(),
+                ResultCount = contentItems.Count,
+                Song = Song,
+            };
+        } 
     }
 }
