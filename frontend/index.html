@@ -23,26 +23,6 @@
                                 video {
                                     display:none;
                                 }
-                                .invert {
-                                    -webkit-filter: invert(.8);
-                                    filter: invert(.8);
-                                }
-                                .grayscale {
-                                    -webkit-filter: grayscale(1);
-                                    filter: grayscale(1);
-                                }
-                                .sepia {
-                                    -webkit-filter: sepia(1);
-                                    filter: sepia(1);
-                                }
-                                .blur {
-                                    -webkit-filter: blur(5px);
-                                    filter: blur(5px);
-                                }
-                                .hue-rotate {
-                                    -webkit-filter: hue-rotate(90deg);
-                                    filter: hue-rotate(90deg);
-                                }
                                 </style>
                                 
                                 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -110,9 +90,14 @@
                 <div class="jumbotron">
                 
                 <h1 id="songtitle" style="font-family: 'Lobster', cursive;"></h1>
-                <div id="player"></div>
+                
+                <audio  id="audioplayer"  controls><source type="audio/mpeg"> </audio>;
                 
                 <video autoplay="true" id="video">
+                </video>
+                
+                <video autoplay="true"  id="v" controls loop>
+                    <source src="https://neonhitch.blob.core.windows.net/videos/Neon Hitch - Freedom Music Video MASTER.mp4" type=video/mp4>
                 </video>
                 
                 <div id="grid"></div>
@@ -149,8 +134,7 @@
             // song info
             document.getElementById("songtitle").innerHTML = blob.Song.SongName;
             
-            var aud = "<audio controls><source src=\"" + blob.Song.SongUrl + "\" type=\"audio/mpeg\"> </audio>";
-            document.getElementById("player").innerHTML = aud;
+            document.getElementById("audioplayer").src = blob.Song.SongUrl;
             
             // build the grid
             content = blob.Results;
@@ -172,20 +156,36 @@
             }
             out += "</table>"
             document.getElementById("grid").innerHTML = out;
+            
+            
+            var vid = document.getElementById('v');
+            vid.play();
+            vid.muted = true;
         }
         
-        
+        function togglePlay()
+        {
+            var player = document.getElementById('audioplayer');
+            if (player.paused)
+            {
+                player.play();
+            }
+            else
+            {
+                player.pause();
+            }
+        }
         
         var fxList = [
                       {
-                      filter:'brightness',
+                      filter:'saturate',
                       units:'',
                       max:10,
                       min:2,
                       def:5
                       },
                       {
-                      filter:'saturate',
+                      filter:'brightness',
                       units:'',
                       max:10,
                       min:2,
@@ -243,6 +243,11 @@
         }
         
         
+        var imgID = 0;
+        var txtID = 0;
+        var fxID = 0;
+        
+        
 
         function blitVideo()
         {
@@ -254,22 +259,77 @@
         // sad - we can't pull the data out if we've drawn cross-origin (eg. images from other URLs).
            // var data = ctx.getImageData(0, 0, 10, 10).data;
            var colour = Math.random() * 255;
-            
-            var pos = 0;
+           
             var px = 0;
-            for (row=9; row >=  0; --row)
+            for (row=0; row < 10; ++row)
             {
                 for (col=0; col < 10; ++col)
                 {
-                    var r = 0;//data[pos+0];
-                    var g = 0;//data[pos+1];
-                    var b = colour;//data[pos+2];
+                    var r = 0;
+                    var g = 0;
+                    var b = 0;
+                    
+                    if (row == 1)
+                    {
+                        if (col == (fxID + 1))
+                        {
+                            b = 127;
+                        }
+                        else
+                        {
+                            b = 88;
+                        }
+                    }
+                    if (row >= 2 && row < 4)
+                    {
+                        
+                        if (col == (imgID + 1))
+                        {
+                            b = 127;
+                            g = 127;
+                        }
+                        else
+                        {
+                            b = 88;
+                            g = 88;
+                        }
+                    }
+                    if (row >= 4 && row < 6)
+                    {
+                        if (col == (txtID + 1))
+                        {
+                            r = 127;
+                            g = 127;
+                        }
+                        else
+                        {
+                            r = 88;
+                            g = 88;
+                        }
+                    }
+                    if (row >= 6 && row < 7)
+                    {
+                        r = 96;
+                        b = 127;
+                    }
+                    
+                    if (row >= 7 && row < 8)
+                    {
+                        r = 127;
+                        b = 96;
+                    }
+                    
+                    if (row == 8)
+                    {
+                        r = 127;
+                        g = 127;
+                        b = 127;
+                    }
                     
                     if (px != 0 && px != 9 && px != 90 && px != 99)
                     {
-                        array = array.concat(px,  Math.floor(r/2), Math.floor( g/2), Math.floor( b/2));
+                        array = array.concat(px,  Math.floor(r), Math.floor( g), Math.floor( b));
                     }
-                    pos+=4;
                     px++;
                 }
                 
@@ -279,21 +339,39 @@
         }
         
         var renderVid = false;
-        
-        
-        var imgID = 0;
-        var txtID = 0;
-        var fxID = 0;
+        var renderCam = false;
         
         
         function onLaunchpad(type, pad, val)
         {
-            var video = document.querySelector("#video");
-            
             // set up the canvas
             var c = document.getElementById("output");
             var ctx = c.getContext("2d");
             
+            if (renderVid)
+            {
+                ctx.globalAlpha = 0.5;
+                var vid = document.getElementById('video');
+                ctx.drawImage(vid, 0, 0);
+            }
+            else if (renderCam)
+            {
+                ctx.globalAlpha = 0.5;
+                var vid = document.getElementById('v');
+                ctx.drawImage(vid,-200,-200);
+            }
+            else
+            {
+                ctx.globalAlpha = 1.0;
+            }
+            
+            if (type == 0xB0 && val > 0)
+            {
+                if (pad < 10)
+                {
+                    togglePlay();
+                }
+            }
             
             if (type == 0x90 && val != 0)
             {
@@ -301,31 +379,38 @@
     
              if (pad < 20)
              {
+                 // FX select
                  fxID = pad - 11;
                  setFX(fxList[fxID], fxList[fxID].def);
                  
              }
-             else if (pad < 30)
+             else if (pad < 40)
              {
-                 var img = document.getElementById("image" + imgID++ % imgIdx);
+                 imgID = pad - 21;
+                 
+                 var img = document.getElementById("image" + imgID);
                  var x = -200 + Math.random() * 400;
                  var y = -100 + Math.random() * 200;
-                 ctx.drawImage(img,x,y);
-                 renderVid = false;
-                 ctx.setTransform(1,0,0,1,0,0);
+                 if (img)
+                 {
+                     ctx.drawImage(img,x,y);
+                     renderVid = false;
+                     renderCam = false;
+                 }
              }
              else if (pad < 60)
              {
+                 txtID = pad - 41;
                  ctx.font = "120px Lobster";
                  
-                 var txt = document.getElementById("text" + txtID++ % txtIdx);
+                 var txt = document.getElementById("text" + txtID);
                  
                  if (pad % 2)
                  {
                      ctx.font = "120px Miss Fajardose";
                  }
                  
-                 if (pad > 55)
+                 if (Math.random() > 0.5)
                  {
                      ctx.fillStyle = 'black';
                  }
@@ -335,19 +420,45 @@
                  }
                  
                  var x = 10 + Math.random() * 200;
-                 var y = 10 + Math.random() * 300;
+                 var y = 10 + Math.random() * 400;
                  
-                 ctx.fillText(txt.innerHTML,x,y);
+                 if (txt)
+                 {
+                     ctx.fillText(txt.innerHTML,x,y);
+                 }
              }
-             else if (pad > 70)
-             {
-                 ctx.transform(0.9,0.2,-0.2,0.9,0,0);
-             }
-             else
+             else if (pad < 70)
              {
                  renderVid = true;
+                 renderCam = false;
              }
-             
+             else if (pad < 80)
+             {
+                 renderCam = true;
+                 renderVid = false;
+             }
+             else if (pad < 90)
+             {
+                if (pad == 81)
+                {
+                    ctx.translate(200, 80); // translate to rectangle center
+                    ctx.rotate((Math.PI/180)*10); // rotate
+                    ctx.translate(-200, -80); // translate back
+                }
+                else if (pad == 82)
+                {
+                    ctx.transform(0.9,-0.1,0.1,0.9,0,0);
+                }
+                else if (pad == 83)
+                {
+                    // flip context horizontally
+                    ctx.scale(-1, 1);
+                }
+                else
+                {
+                   ctx.setTransform(1,0,0,1,0,0);
+                }
+             }
              
              blitVideo();
              
@@ -356,11 +467,6 @@
             if (type == 0xD0)
             {
                 setFX(fxList[fxID], pad);
-            }
-            
-            if (renderVid)
-            {
-                ctx.drawImage(video, 0, 0);
             }
         }
         
