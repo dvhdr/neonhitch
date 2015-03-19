@@ -139,6 +139,9 @@
         
         var content;
         
+        var imgIdx=0;
+        var txtIdx=0;
+        
         function onJSON(response) {
             var blob = JSON.parse(response);
             
@@ -151,10 +154,8 @@
             // build the grid
             content = blob.Results;
             var i;
-            var out = "<table>";
+            var out = "<table style=\"display:none;\">";
             
-            var imgIdx=0;
-            var txtIdx=0;
             
             for(i = 0; i < content.length; i++) {
                 out += "<tr><td>";
@@ -171,6 +172,9 @@
             out += "</table>"
             document.getElementById("grid").innerHTML = out;
         }
+        
+        
+        
         
         
         
@@ -193,8 +197,8 @@
             {
                 for (col=0; col < 10; ++col)
                 {
-                    var r = colour;//data[pos+0];
-                    var g = colour;//data[pos+1];
+                    var r = 0;//data[pos+0];
+                    var g = 0;//data[pos+1];
                     var b = colour;//data[pos+2];
                     
                     if (px != 0 && px != 9 && px != 90 && px != 99)
@@ -215,6 +219,10 @@
         function setFX(value) {
             document.getElementById("output").setAttribute("style", "-webkit-filter:grayscale(" + value + "%)");
         }
+        
+        var imgID = 0;
+        var txtID = 0;
+        
         
         function onLaunchpad(type, pad, val)
         {
@@ -238,7 +246,7 @@
              
              if (pad < 30)
              {
-                 var img = document.getElementById("image0");
+                 var img = document.getElementById("image" + imgID++ % imgIdx);
                  ctx.drawImage(img,-300,-100);
                  renderVid = false;
                  ctx.setTransform(1,0,0,1,0,0);
@@ -246,8 +254,13 @@
              else if (pad < 60)
              {
                  ctx.font = "120px Lobster";
-                 var txt = document.getElementById("text0");
-                 ctx.fillText(txt.value,100,250);
+                 
+                 var txt = document.getElementById("text" + txtID++ % txtIdx);
+                 
+                 var x = 10 + Math.random() * 200;
+                 var y = 10 + Math.random() * 200;
+                 
+                 ctx.fillText(txt.innerHTML,x,y);
              }
              else if (pad > 70)
              {
