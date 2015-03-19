@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Neon Hitch </title>
+                                
+                                <!-- Bootstrap core CSS -->
+                                <link href="css/bootstrap.min.css" rel="stylesheet">
+                                
+                                
+                                <style>
+                                h1-title
+                                {
+                                    text-color: white
+                                }
+                                body
+                                {
+                                    background: url("https://neonhitch.blob.core.windows.net/images/IMG_20150209_214551.jpg") no-repeat;
+                                    background-color: #000000;
+                                    opacity: 0.95;
+                                    margin-top: 80px;
+                                }
+                                </style>
+                                
+                                <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+                                
+                                <!--
+                                <script src="http://cwilso.github.com/WebMIDIAPIShim/WebMIDIAPI.js"></script>
+                                -->
+                                <script type="text/javascript">
+                                    var promptJazzPlugin = function()
+                                    {
+                                        
+                                        $('#jazz').modal('show').one('click', '#download', function (e)
+                                                                             {
+                                                                     location.reload();
+                                                                            });
+                                    }
+                                </script>
+                                
+        </head>
+    
+    <body>
+    
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#" id="device">Neon Hitch</a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Jazz Plugin download prompt -->
+        <div class="modal fade" id="jazz">
+            <div class="modal-dialog" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title">Download support plugin</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>To use a Launchpad to control your video, your browser needs a little help.</p>
+                        <ul>
+                            <li><a href="http://jazz-soft.net/download/Jazz-Plugin/" target="_blank">Download Jazz-Plugin</a></li>
+                            <li>Install it</li>
+                            <li>Connect your <a href="http://novationmusic.com/launchpad">Launchpad</a></li>
+                            <li>Reload this page and you're off!</li>
+                        </ul>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="download">Reload Page</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        
+        
+        <div class="main">
+            <div class="container">
+                <div class="jumbotron">
+                
+                <h1 id="songtitle">Neon Hitch - Sparks (Abe Clements Remix)</h1>
+                <div id="player"></div>
+                
+                <video autoplay="true" id="videoElement">
+                </video>
+                
+                <div id="grid"></div>
+                
+                
+
+
+            </div>
+        </div>
+        
+        
+        
+        <script>
+            var xmlhttp = new XMLHttpRequest();
+            var url = "../sample%20json.txt";
+            
+            xmlhttp.onreadystatechange=function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    makeGrid(xmlhttp.responseText);
+                }
+            }
+        
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+        
+        function makeGrid(response) {
+            var blob = JSON.parse(response);
+            
+            // song info
+            document.getElementById("songtitle").innerHTML = blob.Song.SongName;
+            
+            var song = blob.Song.url;
+            
+            var aud = "<audio controls><source src=\"" + blob.Song.SongURL + "\" type=\"audio/mpeg\"> </audio>";
+            document.getElementById("player").innerHTML = aud;
+            
+            // build the grid
+            var arr = blob.Results;
+            var i;
+            var out = "<table>";
+            
+            for(i = 0; i < arr.length; i++) {
+                out += "<tr><td>";
+                
+                if ( arr[i].Type == "image") {
+                    out += "<img src=" + arr[i].Value + "  width=\"128\" />"
+                }
+                else if ( arr[i].Type == "text") {
+                    out += "<p>" + arr[i].Value + "</p>"
+                }
+                
+                out += "</tr>";
+            }
+            out += "</table>"
+            document.getElementById("grid").innerHTML = out;
+        }
+        
+        // set up video from webcam
+        var video = document.querySelector("#videoElement");
+        
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+        
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia({video: true}, handleVideo, videoError);
+        }
+        
+        function handleVideo(stream) {
+            video.src = window.URL.createObjectURL(stream);
+        }
+        
+        function videoError(e) {
+            // do something
+        }
+        
+        
+            </script>
+        
+        
+        
+        
+        
+        <!-- Bootstrap core JavaScript
+         ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        
+        <!--
+         <script src='js/midi.js'></script>
+         -->
+    </body>
+</html>
