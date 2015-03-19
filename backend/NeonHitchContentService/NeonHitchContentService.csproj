@@ -83,6 +83,7 @@
     <Compile Include="EntityModel\ExternalModels\Decibel\DecibelArtistResult.cs" />
     <Compile Include="EntityModel\ExternalModels\FacebookPhotoUploaded.cs" />
     <Compile Include="EntityModel\ExternalModels\INormalisable.cs" />
+    <Compile Include="EntityModel\ExternalModels\NeonHitch\NeonImageResult.cs" />
     <Compile Include="EntityModel\ExternalModels\NeonHitch\NeonSongResult.cs" />
     <Compile Include="EntityModel\SocialMediaItem.cs" />
     <Compile Include="EntityModel\NormalisedResult.cs" />

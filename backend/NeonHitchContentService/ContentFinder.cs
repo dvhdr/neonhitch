@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NeonHitchContentService.Api;
 using NeonHitchContentService.EntityModel;
 using NeonHitchContentService.EntityModel.QueryObjects;
@@ -17,15 +15,19 @@ namespace NeonHitchContentService
         /// </summary>
         /// <param name="songId"></param>
         /// <returns></returns>
-        public static NormalisedContentSet FindContent(ContentQuery query)
+        public static NormalisedResultSet FindContent(ContentQuery query)
         {
             var contentResults = new List<NormalisedResult>();
 
             // Find the song in the Heon Hitch API
-            var hitchSong = new NeonHitch().RunImport(query.SongId);
-            if (hitchSong == null) throw new Exception("No Neon Hitch song could be found with this Id");
+            var neon = new NeonHitch();
+            var neonSong = neon.ImportSong(query.SongId);
+            if (neonSong == null) throw new Exception("No Neon Hitch song could be found with this Id");
             // Add content from the song
-            contentResults.AddRange(hitchSong.Normalise());
+            contentResults.AddRange(neonSong.Normalise());
+
+            for (var i = 1; i < 3; i++)
+                contentResults.AddRange(neon.ImportImage(i.ToString()).Normalise());
 
             var decibel = new Decibel();
             // Get social media items
@@ -35,25 +37,25 @@ namespace NeonHitchContentService
             //    contentResults.AddRange(socialMediaLink.ImportContent());
 
             // Get decibel artwork for this artist
-            contentResults.AddRange(decibel.ImportArtwork(hitchSong.Artist));
+            contentResults.AddRange(decibel.ImportArtwork(neonSong.Artist));
 
             // Get decibel artwork for related artists
-            contentResults.AddRange(decibel.ImportArtwork(hitchSong.RelatedArtist));
+            contentResults.AddRange(decibel.ImportArtwork(neonSong.RelatedArtist));
 
-            return new NormalisedContentSet
+            return new NormalisedResultSet
             {
                 NormalisedResults = contentResults,
                 Song = new Song
                 {
-                    ArtistName = hitchSong.Artist,
-                    SongName = hitchSong.Title,
-                    SongUrl = hitchSong.AudioLink,
+                    ArtistName = neonSong.Artist,
+                    SongName = neonSong.Title,
+                    SongUrl = neonSong.AudioLink,
                 }
             };
         }
     }
 
-    public class NormalisedContentSet
+    public class NormalisedResultSet
     {
         public IEnumerable<NormalisedResult> NormalisedResults { get; set; }
  
