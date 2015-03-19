@@ -26,7 +26,7 @@ namespace NeonHitchContentService
             // Add content from the song
             contentResults.AddRange(neonSong.Normalise());
 
-            for (var i = 1; i < 3; i++)
+            for (var i = 1; i < 6; i++)
                 contentResults.AddRange(neon.ImportImage(i.ToString()).Normalise());
 
             var decibel = new Decibel();
