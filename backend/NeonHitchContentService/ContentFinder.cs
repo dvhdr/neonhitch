@@ -29,9 +29,10 @@ namespace NeonHitchContentService
 
             var decibel = new Decibel();
             // Get social media items
-            var socialMediaLinks = decibel.GetSocialMediaLinks(hitchSong.Artist);
-            foreach (var socialMediaLink in socialMediaLinks)
-                contentResults.AddRange(socialMediaLink.ImportContent());
+            // TODO: import content from social media apis
+            //var socialMediaLinks = decibel.GetSocialMediaLinks(hitchSong.Artist);
+            //foreach (var socialMediaLink in socialMediaLinks)
+            //    contentResults.AddRange(socialMediaLink.ImportContent());
 
             // Get decibel artwork for this artist
             contentResults.AddRange(decibel.ImportArtwork(hitchSong.Artist));

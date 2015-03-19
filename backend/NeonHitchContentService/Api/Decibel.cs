@@ -47,12 +47,9 @@ namespace NeonHitchContentService.Api
         public IEnumerable<NormalisedResult> ImportArtwork(string artistName)
         {
             var results = QueryRunner.Run<Decibel, DecibelAlbumResultSet>("albums?artists=" + artistName);
+            results.ArtistName = artistName;
 
-            var normalisedResults = new List<NormalisedResult>();
-            foreach (var result in results.Results)
-                normalisedResults.AddRange(result.Normalise());
-
-            return normalisedResults;
+            return results.Normalise();
         } 
 
         private static SocialMediaType SiteNameToSocialMediaType(DecibelWebAddress item)

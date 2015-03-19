@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NeonHitchContentService.EntityModel;
 using NeonHitchContentService.EntityModel.ExternalModels;
 
@@ -29,6 +26,9 @@ namespace NeonHitchContentService.Api
 
         public IEnumerable<NormalisedResult> ImportPhotos(string address)
         {
+            // TODO: oauth authentication
+            
+
             var results = QueryRunner.Run<Facebook, FacebookPhotoUploaded>(PageNameFromAddress(address) + "/photos/uploaded");
 
             var normalisedResults = new List<NormalisedResult>();

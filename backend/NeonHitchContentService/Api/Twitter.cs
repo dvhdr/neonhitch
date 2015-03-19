@@ -32,6 +32,11 @@ namespace NeonHitchContentService.Api
         public IEnumerable<NormalisedResult> ImportTweets(string address)
         {
             throw new NotImplementedException();
+        }
+
+        private static string PageNameFromAddress(string address)
+        {
+            return address.Replace("https://twitter.com/", String.Empty);
         } 
     }
 }
