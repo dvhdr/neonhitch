@@ -19,6 +19,29 @@
                                     opacity: 0.95;
                                     margin-top: 80px;
                                 }
+                                video {
+                                    display:none;
+                                }
+                                .invert {
+                                    -webkit-filter: invert(.8);
+                                    filter: invert(.8);
+                                }
+                                .grayscale {
+                                    -webkit-filter: grayscale(1);
+                                    filter: grayscale(1);
+                                }
+                                .sepia {
+                                    -webkit-filter: sepia(1);
+                                    filter: sepia(1);
+                                }
+                                .blur {
+                                    -webkit-filter: blur(5px);
+                                    filter: blur(5px);
+                                }
+                                .hue-rotate {
+                                    -webkit-filter: hue-rotate(90deg);
+                                    filter: hue-rotate(90deg);
+                                }
                                 </style>
                                 
                                 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -85,17 +108,16 @@
             <div class="container">
                 <div class="jumbotron">
                 
-                <h1 id="songtitle">Neon Hitch - Sparks (Abe Clements Remix)</h1>
+                <h1 id="songtitle"></h1>
                 <div id="player"></div>
                 
-                <video autoplay="true" id="videoElement">
+                <video autoplay="true" id="video">
                 </video>
                 
                 <div id="grid"></div>
                 
-                
-                
-                <div id="output"></div>
+                <canvas id="output" width="640" height="480" style="border:1px solid #000000;">
+                </canvas>
 
             </div>
         </div>
@@ -108,14 +130,14 @@
             
             xmlhttp.onreadystatechange=function() {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    makeGrid(xmlhttp.responseText);
+                    onJSON(xmlhttp.responseText);
                 }
             }
         
         xmlhttp.open("GET", url, true);
         xmlhttp.send();
         
-        function makeGrid(response) {
+        function onJSON(response) {
             var blob = JSON.parse(response);
             
             // song info
@@ -135,26 +157,74 @@
                 out += "<tr><td>";
                 
                 if ( arr[i].Type == "image") {
-                    out += "<img src=" + arr[i].Value + "  width=\"128\" />"
+                    out += "<img id=\"davesimage\" src=" + arr[i].Value + "  width=\"128\" />"
                 }
                 else if ( arr[i].Type == "text") {
-                    out += "<p>" + arr[i].Value + "</p>"
+                    out += "<p id=\"davestext\">" + arr[i].Value + "</p>"
                 }
                 
                 out += "</tr>";
             }
             out += "</table>"
             document.getElementById("grid").innerHTML = out;
+            
+            
+            // set up the canvas
+            var c = document.getElementById("output");
+            var ctx = c.getContext("2d");
+            var img = document.getElementById("davesimage");
+            //ctx.drawImage(img,0,0);
+            
+            var video = document.querySelector("#video");
+            ctx.drawImage(video, 0, 0);
+            
+            ctx.font = "96px Helvetica";
+           // ctx.fillText("Neon",10,50);
+        }
+        
+        var filter = 0;
+        
+        
+        
+        function onLaunchpad(type, pad, val)
+        {
+            var video = document.querySelector("#video");
+            
+            // set up the canvas
+            var c = document.getElementById("output");
+            var ctx = c.getContext("2d");
+            
+            if (type == 0x90 && val != 0) {
+            var filters = ['invert', 'grayscale', 'sepia', 'blur', 'hue-rotate', ''];
+            
+            
+             var effect = filters[filter++ % filters.length];
+             
+             c.className = effect;
+             c.style.webkitFilter = effect;
+            }
+            
+            
+            ctx.drawImage(video, 0, 0);
+            
+            
+            for (row=0; row < 10; ++row)
+            {
+                for (col=0; col < 10; ++col)
+                {
+                    var pixel = ctx.getImageData(row, col, 1, 1).data;
+                    
+                    setPixel(row, col, pixel[0], pixel[1], pixel[2]);
+                }
+                
+            }
+
         }
         
         
         
-        
-        
-        
-        
         // set up video from webcam
-        var video = document.querySelector("#videoElement");
+        var video = document.querySelector("#video");
         
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
         
@@ -171,10 +241,7 @@
         }
         
         
-            </script>
-        
-        
-        
+    </script>
         
         
         <!-- Bootstrap core JavaScript

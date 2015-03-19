@@ -22,30 +22,37 @@ function onMIDIStarted( midi )
 {
     midiAccess = midi;
     
-    // inputs
-    var inputs= midiAccess.inputs.values();
-    
-    for ( var input = inputs.next(); input && !input.done; input = inputs.next()){
-        input = input.value;
+    if ((typeof(midiAccess.inputs) == "function")) {  //Old Skool MIDI inputs() code
         
-        if (input.name.toString().indexOf("MIDI Port") != -1) {
-            
-            midiIn = input;
-            midiIn.onmidimessage = midiProc;
-            bassStationFound = true;
-        }
+        console.log("browser wants old skool MIDI device access?")
     }
-    
-    // output
-    var outputs= midiAccess.outputs.values();
-    
-    for ( var output = outputs.next(); output && !output.done; output = outputs.next()){
-        output = output.value;
-    
-        if (output.name.toString().indexOf("MIDI Port") != -1)
-        {
-            midiOut = output;
-            break;
+    else
+    {
+        // inputs
+        var inputs= midiAccess.inputs.values();
+        
+        for ( var input = inputs.next(); input && !input.done; input = inputs.next()){
+            input = input.value;
+            
+            if (input.name.toString().indexOf("MIDI Port") != -1) {
+                
+                midiIn = input;
+                midiIn.onmidimessage = midiProc;
+                bassStationFound = true;
+            }
+        }
+        
+        // output
+        var outputs= midiAccess.outputs.values();
+        
+        for ( var output = outputs.next(); output && !output.done; output = outputs.next()){
+            output = output.value;
+        
+            if (output.name.toString().indexOf("Live Port") != -1)
+            {
+                midiOut = output;
+                break;
+            }
         }
     }
     
@@ -75,5 +82,17 @@ function midiProc(event) {
         var channel = data[0] & 0xf;
         var noteNumber = data[1];
         var velocity = data[2];
+    
+    onLaunchpad(data[0], data[1], data[2]);
+    
+}
 
+function setPixel(row, col, red, green, blue)
+{
+    if (midiOut)
+    {
+        var syx = [0xF0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0B, row + col*10, red, green, blue, 0xF7];
+        
+        midiOut.send(syx);
+    }
 }
