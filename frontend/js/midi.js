@@ -87,11 +87,15 @@ function midiProc(event) {
     
 }
 
-function setPixel(row, col, red, green, blue)
+function blit(pixels)
 {
     if (midiOut)
     {
-        var syx = [0xF0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0B, row + col*10, red, green, blue, 0xF7];
+        var syx = [0xF0, 0x00, 0x20, 0x29, 0x02, 0x10, 0x0B];
+        syx = syx.concat(pixels);
+        syx = syx.concat(0xF7);
+        
+       // console.log(syx);
         
         midiOut.send(syx);
     }

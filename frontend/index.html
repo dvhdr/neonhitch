@@ -168,23 +168,43 @@
             out += "</table>"
             document.getElementById("grid").innerHTML = out;
             
-            
-            // set up the canvas
-            var c = document.getElementById("output");
-            var ctx = c.getContext("2d");
-            var img = document.getElementById("davesimage");
-            //ctx.drawImage(img,0,0);
-            
-            var video = document.querySelector("#video");
-            ctx.drawImage(video, 0, 0);
-            
-            ctx.font = "96px Helvetica";
-           // ctx.fillText("Neon",10,50);
         }
         
         var filter = 0;
         
+        function blitVideo()
+        {
+            var c = document.getElementById("output");
+            var ctx = c.getContext("2d");
+            
+            var array = new Array();
+            
+            var data = ctx.getImageData(0, 0, 10, 10).data;
+            
+            var pos = 0;
+            var px = 0;
+            for (row=9; row >=  0; --row)
+            {
+                for (col=0; col < 10; ++col)
+                {
+                    var r = data[pos+0];
+                    var g = data[pos+1];
+                    var b = data[pos+2];
+                    
+                    if (px != 0 && px != 9 && px != 90 && px != 99)
+                    {
+                        array = array.concat(px,  Math.floor(r/2), Math.floor( g/2), Math.floor( b/2));
+                    }
+                    pos+=4;
+                    px++;
+                }
+                
+            }
+            blit(array);
+            
+        }
         
+        var renderVid = false;
         
         function onLaunchpad(type, pad, val)
         {
@@ -194,6 +214,7 @@
             var c = document.getElementById("output");
             var ctx = c.getContext("2d");
             
+            
             if (type == 0x90 && val != 0) {
             var filters = ['invert', 'grayscale', 'sepia', 'blur', 'hue-rotate', ''];
             
@@ -202,23 +223,38 @@
              
              c.className = effect;
              c.style.webkitFilter = effect;
+             
+             ctx.drawImage(video, 0, 0);
+             
+             if (pad < 30)
+             {
+                 var img = document.getElementById("davesimage");
+                 ctx.drawImage(img,-300,-100);
+                 renderVid = false;
+                 ctx.setTransform(1,0,0,1,0,0);
+             }
+             else if (pad < 60)
+             {
+                 ctx.font = "120px Helvetica";
+                 ctx.fillText("Neon Hitch",200,250);
+             }
+             else if (pad > 70)
+             {
+                 ctx.transform(0.9,0.2,-0.2,0.9,0,0);
+             }
+             else
+             {
+                 renderVid = true;
+             }
+             
+             blitVideo();
+             
             }
             
-            
-            ctx.drawImage(video, 0, 0);
-            
-            
-            for (row=0; row < 10; ++row)
+            if (renderVid)
             {
-                for (col=0; col < 10; ++col)
-                {
-                    var pixel = ctx.getImageData(row, col, 1, 1).data;
-                    
-                    setPixel(row, col, pixel[0], pixel[1], pixel[2]);
-                }
-                
+                ctx.drawImage(video, 0, 0);
             }
-
         }
         
         
