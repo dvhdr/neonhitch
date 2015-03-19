@@ -175,11 +175,32 @@
         
         
         
+        var fxList = [
+                      {
+                      filter:'sepia',
+                      units:'%',
+                      max:100,
+                      min:0,
+                      def:100
+                      },
+                      {
+                      filter:'invert',
+                      units:'%',
+                      max:100,
+                      min:0,
+                      def:100
+                      },
+        
+        ];
+        
+        function setFX(fx, value127) {
+            
+            var norm = fx.min = (fx.max - fx.min) * (value127 / 127);
+            document.getElementById("output").setAttribute("style", "-webkit-filter:" + fx.filter + "(" + norm + fx.units + ")");
+        }
         
         
-        
-        var filter = 0;
-        
+
         function blitVideo()
         {
             var c = document.getElementById("output");
@@ -216,12 +237,10 @@
         
         var renderVid = false;
         
-        function setFX(value) {
-            document.getElementById("output").setAttribute("style", "-webkit-filter:grayscale(" + value + "%)");
-        }
         
         var imgID = 0;
         var txtID = 0;
+        var fxID = 0;
         
         
         function onLaunchpad(type, pad, val)
@@ -234,13 +253,8 @@
             
             
             if (type == 0x90 && val != 0) {
-            var filters = ['invert', 'grayscale', 'sepia', 'blur', 'hue-rotate', ''];
             
-            
-             var effect = filters[filter++ % filters.length];
-             
-             c.className = effect;
-             c.style.webkitFilter = effect;
+                setFX(fxList[fxID], fxList[fxID].def);
              
              ctx.drawImage(video, 0, 0);
              
@@ -273,8 +287,14 @@
                  renderVid = true;
              }
              
+             
              blitVideo();
              
+            }
+            
+            if (type == 0xD0)
+            {
+                setFX(fxList[fxID], pad);
             }
             
             if (renderVid)
