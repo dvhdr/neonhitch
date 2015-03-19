@@ -9,9 +9,9 @@ namespace NeonHitchContentService.EntityModel.QueryObjects
 {
     public class ContentQuery
     {
-        public int SongId { get; private set; }
+        public string SongId { get; private set; }
 
-        public ContentQuery(int songId)
+        public ContentQuery(string songId)
         {
             SongId = songId;
         }
@@ -20,9 +20,7 @@ namespace NeonHitchContentService.EntityModel.QueryObjects
         {
             var normalisedResults = ContentFinder.FindContent(this);
 
-            // TODO: filter and ordered results
-
-            throw new NotImplementedException();
+            return normalisedResults.Evaluate();
         }
     }
 }

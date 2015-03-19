@@ -22,7 +22,7 @@ namespace NeonHitchContentService.Api
             return _rootUrl + query + "?subscription-key=b0a1653d8ebc49079a20856c6121d095";
         }
 
-        public NeonSongResult RunImport(int songId)
+        public NeonSongResult RunImport(string songId)
         {
             // Find the song in the Neon Hitch API
             return QueryRunner.Run<NeonHitch, NeonSongResult>("Snatch/choon/" + songId);
